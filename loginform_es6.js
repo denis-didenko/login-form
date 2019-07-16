@@ -156,6 +156,16 @@ class LoginForm extends Utils {
         });
     }
 
+    redirect(url) {
+        const exp = new RegExp(/\/\/(www|m)/);
+
+        if (!exp.test(url)) {
+            url = location.protocol + '//' + location.host + (url[0] === '/' ? url : '/' + url);
+        }
+
+        window.location.href = url;
+    }
+
     prepareFetchOptions(form) {
         const body = new FormData(form);
         const headers = new Headers({ 'x-requested-with': 'XMLHttpRequest' });
@@ -175,13 +185,19 @@ class LoginForm extends Utils {
             .then(res => res.json())
             .then(({ data, status, meta }) => {
                 if (status === 'error') {
-                    this.highlight(meta.description);
+                    // cancel login spam
+                    if (meta.code === 302 && meta.redirect) {
+                        this.redirect(meta.redirect);
+                        return;
+                    }
+
+                    this.renderErrors(meta.description);
                 }
 
                 if (status === 'success') {
                     // success recovery email
                     if (data.valid) {
-                        this.highlight(data);
+                        this.renderErrors(data);
                         return;
                     }
 
@@ -195,7 +211,7 @@ class LoginForm extends Utils {
             });
     }
 
-    highlight(data) {
+    renderErrors(data) {
         const { login, recovery } = this.props;
         const { fields } = this.state;
 
