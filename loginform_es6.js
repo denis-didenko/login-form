@@ -22,6 +22,7 @@ class LoginForm extends Utils {
                 formElement: '.login-form',
                 emailElement: '.login-email-field',
                 emailError: '[data-error-name="email"]',
+                msisdnError: '[data-error-name="msisdn"]',
                 passwordElement: '.login-password-field',
                 passwordError: '[data-error-name="password"]',
                 submitElement: '.login-form-submit',
@@ -62,6 +63,7 @@ class LoginForm extends Utils {
 
         const loginEmailField = loginForm.querySelector(login.emailElement);
         const loginEmailError = loginForm.querySelector(login.emailError);
+        const loginMsisdnError = loginForm.querySelector(login.msisdnError);
         const loginPasswordField = loginForm.querySelector(login.passwordElement);
         const loginPasswordError = loginForm.querySelector(login.passwordError);
 
@@ -74,6 +76,12 @@ class LoginForm extends Utils {
                 element: loginEmailField,
                 value: null,
                 error: loginEmailError,
+            },
+
+            [`${login.formNamespace}[msisdn]`]: {
+                element: loginEmailField,
+                value: null,
+                error: loginMsisdnError,
             },
 
             [loginPasswordField.name]: {
@@ -108,7 +116,7 @@ class LoginForm extends Utils {
         const recoverySubmitBtn = recoveryForm.querySelector(recovery.submitElement);
         recoverySubmitBtn.addEventListener('click', e => {
             e.preventDefault();
-            if (this.hasSameValues(recoveryForm)) return; // cancel request for the same value
+            // if (this.hasSameValues(recoveryForm)) return; // cancel request for the same value
 
             this.validate(recovery.actionURL, recoveryForm);
         });
